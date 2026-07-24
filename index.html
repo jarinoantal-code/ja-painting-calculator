@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#111111">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>JA Painting Calculator V2.5.2</title>
+  <title>JA Painting Calculator V2.6</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icon-192.png">
   <style>
@@ -243,7 +243,7 @@ height:100px!important;width:96vw!important}
         </div>
       </div>
       <div class="checks">
-        <label class="check"><input id="reserve10" type="checkbox" checked>Pripočítať rezervu 10 %</label>
+        <label class="check"><input id="reserve10" type="checkbox" checked>Pripočítať realizačnú réžiu 10 %</label>
       </div>
     </section>
 
@@ -267,12 +267,17 @@ height:100px!important;width:96vw!important}
 
     <section class="card">
       <h2>Súhrn</h2>
+      <div class="summary-row"><span>Celková plocha stien</span><strong id="sumWalls">0,00 m²</strong></div>
+      <div class="summary-row"><span>Celková plocha stropov</span><strong id="sumCeilings">0,00 m²</strong></div>
+      <div class="summary-row"><span>Spolu maľovaná plocha</span><strong id="sumArea">0,00 m²</strong></div>
       <div class="summary-row"><span>Maľovanie</span><strong id="sumPainting">0,00 €</strong></div>
       <div class="summary-row"><span>Príplatok strop/schodisko</span><strong id="sumSurface">0,00 €</strong></div>
       <div class="summary-row"><span>Doplnkové práce</span><strong id="sumExtras">0,00 €</strong></div>
-      <div class="summary-row"><span>Doprava a ostatné</span><strong id="sumOther">0,00 €</strong></div>
+      <div class="summary-row"><span>Najazdené kilometre</span><strong id="sumKm">0 km</strong></div>
+      <div class="summary-row"><span>Doprava</span><strong id="sumTravel">0,00 €</strong></div>
+      <div class="summary-row"><span>Ostatné položky</span><strong id="sumFixed">0,00 €</strong></div>
       <div class="summary-row"><span>Základ ceny</span><strong id="basePrice">0,00 €</strong></div>
-      <div class="summary-row"><span>Rezerva 10 %</span><strong id="reserveValue">0,00 €</strong></div>
+      <div class="summary-row"><span>Realizačná réžia 10 %</span><strong id="reserveValue">0,00 €</strong></div>
       <div class="summary-row"><span>Reálna cena</span><strong id="realPrice">50,00 €</strong></div>
       <div class="summary-row discount"><span>Hodnota zľavy</span><strong id="discountValue">0,00 €</strong></div>
       <div class="summary-row total"><span>Konečná cena</span><strong id="finalPrice">50,00 €</strong></div>
@@ -384,14 +389,21 @@ height:100px!important;width:96vw!important}
     <div><strong>Dátum:</strong> <span id="poDate"></span></div>
     <div><strong>Zákazník:</strong> <span id="poCustomer"></span></div>
     <div><strong>Adresa:</strong> <span id="poAddress"></span></div>
+    <div><strong>Najazdené kilometre:</strong> <span id="poKm"></span></div>
+    <div><strong>Cena dopravy:</strong> <span id="poTravel"></span></div>
   </div>
   <table>
     <thead><tr><th>Miestnosť</th><th>Steny m²</th><th>Strop m²</th><th>Farba</th><th>Nátery</th><th>Cena</th></tr></thead>
     <tbody id="poRooms"></tbody>
   </table>
   <div class="po-summary">
+    <div class="po-row"><span>Plocha stien</span><strong id="poWalls"></strong></div>
+    <div class="po-row"><span>Plocha stropov</span><strong id="poCeilings"></strong></div>
+    <div class="po-row"><span>Spolu maľovaná plocha</span><strong id="poArea"></strong></div>
+    <div class="po-row"><span>Doprava</span><strong id="poTravelSummary"></strong></div>
+    <div class="po-row"><span>Ostatné položky</span><strong id="poFixed"></strong></div>
     <div class="po-row"><span>Základ ceny</span><strong id="poBase"></strong></div>
-    <div class="po-row"><span>Rezerva 10 %</span><strong id="poReserve"></strong></div>
+    <div class="po-row"><span>Realizačná réžia a nepredvídané práce (10 %)</span><strong id="poReserve"></strong></div>
     <div class="po-row"><span>Reálna cena</span><strong id="poReal"></strong></div>
     <div class="po-row"><span>Zľava</span><strong id="poDiscount"></strong></div>
     <div class="po-row po-total"><span>KONEČNÁ CENA</span><strong id="poFinal"></strong></div>
@@ -399,12 +411,14 @@ height:100px!important;width:96vw!important}
   <div class="po-note">
     Materiál potrebný na realizáciu – farbu, penetráciu, tmel a dekoratívne hmoty – zabezpečuje zákazník.
     Ponuka obsahuje cenu práce, dopravy a dohodnutých doplnkových úkonov.
+    Realizačná réžia 10 % zahŕňa organizáciu zákazky, opotrebenie bežného náradia,
+    drobné nepredvídané úkony a odchýlky zistené počas realizácie.
     <br><br><span id="poNote"></span>
   </div>
 </section>
 
 <script>
-const roomTypes=["Kuchyňa","Obývačka","Chodba","Kúpeľňa","WC","Spálňa","Detská izba 1","Detská izba 2","Detská izba 3","Šatník","Technická miestnosť","Pracovňa","Hosťovská izba","Garáž","Pivnica","Schodisko","Iné"];
+const roomTypes=["Kuchyňa","Obývačka","Chodba","Kúpeľňa","WC","Spálňa","Detská izba 1","Detská izba 2","Detská izba 3","Šatník","Technická miestnosť","Pracovňa","Hosťovská izba","Špajza","Práčovňa","Garáž","Pivnica","Schodisko","Iné"];
 let roomCounter=0;
 let currentJobId=null;
 let currentOfferNumber=null;
@@ -491,7 +505,13 @@ function addRoom(data={}){
         <div>Cena miestnosti: <strong class="r-price">0,00 €</strong></div>
       </div>
     </div>`;
-  document.getElementById("rooms").appendChild(wrap);
+  const roomsContainer=document.getElementById("rooms");
+  roomsContainer.insertBefore(wrap, roomsContainer.firstChild);
+  setTimeout(()=>{
+    wrap.scrollIntoView({behavior:"smooth",block:"start"});
+    const firstInput=wrap.querySelector(".r-length, .r-direct-walls, .r-name");
+    if(firstInput) firstInput.focus();
+  },50);
   let mode=data.mode||"room";
   function setMode(m){
     mode=m;wrap.dataset.mode=m;
@@ -539,23 +559,36 @@ function roomCalc(room,p){
   return {walls,ceilingArea,totalArea,openingArea,painting,surface,extras,total:painting+surface+extras};
 }
 function calculate(){
-  const p=settings();let area=0,painting=0,surface=0,extras=0;
-  document.querySelectorAll(".room").forEach(r=>{const x=roomCalc(r,p);area+=x.totalArea;painting+=x.painting;surface+=x.surface;extras+=x.extras});
-  const travel=num("kilometers")*p.travelRate,other=travel+num("fixedExtra"),base=painting+surface+extras+other;
+  const p=settings();let area=0,wallsArea=0,ceilingsArea=0,painting=0,surface=0,extras=0;
+  document.querySelectorAll(".room").forEach(r=>{
+    const x=roomCalc(r,p);
+    area+=x.totalArea;wallsArea+=x.walls;ceilingsArea+=x.ceilingArea;
+    painting+=x.painting;surface+=x.surface;extras+=x.extras;
+  });
+  const km=num("kilometers");
+  const travel=km*p.travelRate;
+  const fixed=num("fixedExtra");
+  const other=travel+fixed;
+  const base=painting+surface+extras+other;
   const reserve=document.getElementById("reserve10").checked?base*.10:0;
   let min=p.minimum;if(area<=20&&num("kilometers")>0)min=p.smallWithTravel;
   const real=Math.max(base+reserve,min),discount=real*discountRate(),final=real-discount;
+  document.getElementById("sumWalls").textContent=wallsArea.toLocaleString("sk-SK",{minimumFractionDigits:2,maximumFractionDigits:2})+" m²";
+  document.getElementById("sumCeilings").textContent=ceilingsArea.toLocaleString("sk-SK",{minimumFractionDigits:2,maximumFractionDigits:2})+" m²";
+  document.getElementById("sumArea").textContent=area.toLocaleString("sk-SK",{minimumFractionDigits:2,maximumFractionDigits:2})+" m²";
   document.getElementById("sumPainting").textContent=euro(painting);
   document.getElementById("sumSurface").textContent=euro(surface);
   document.getElementById("sumExtras").textContent=euro(extras);
-  document.getElementById("sumOther").textContent=euro(other);
+  document.getElementById("sumKm").textContent=km.toLocaleString("sk-SK")+" km";
+  document.getElementById("sumTravel").textContent=euro(travel);
+  document.getElementById("sumFixed").textContent=euro(fixed);
   document.getElementById("basePrice").textContent=euro(base);
   document.getElementById("reserveValue").textContent=euro(reserve);
   document.getElementById("realPrice").textContent=euro(real);
   document.getElementById("discountValue").textContent=euro(discount);
   document.getElementById("finalPrice").textContent=euro(final);
   document.getElementById("bottomPrice").textContent=euro(final);
-  return {area,painting,surface,extras,other,base,reserve,real,discount,final};
+  return {area,wallsArea,ceilingsArea,km,travel,fixed,painting,surface,extras,other,base,reserve,real,discount,final};
 }
 function collectJob(){
   const s=calculate(),rooms=[];
@@ -673,10 +706,17 @@ function buildPrintableOffer(job=null){
   document.getElementById("poDate").textContent=new Date().toLocaleDateString("sk-SK");
   document.getElementById("poCustomer").textContent=document.getElementById("customer").value||"-";
   document.getElementById("poAddress").textContent=document.getElementById("address").value||"-";
+  document.getElementById("poKm").textContent=s.km.toLocaleString("sk-SK")+" km";
+  document.getElementById("poTravel").textContent=euro(s.travel);
   const tbody=document.getElementById("poRooms");tbody.innerHTML="";
   document.querySelectorAll(".room").forEach(r=>{
     const tr=document.createElement("tr");tr.innerHTML=`<td>${r.querySelector(".r-name").value}</td><td>${r.querySelector(".r-walls-result").textContent}</td><td>${r.querySelector(".r-ceiling-result").textContent}</td><td>${r.querySelector(".r-color").value}</td><td>${r.querySelector(".r-coats").value}</td><td>${r.querySelector(".r-price").textContent}</td>`;tbody.appendChild(tr)
   });
+  document.getElementById("poWalls").textContent=s.wallsArea.toLocaleString("sk-SK",{minimumFractionDigits:2,maximumFractionDigits:2})+" m²";
+  document.getElementById("poCeilings").textContent=s.ceilingsArea.toLocaleString("sk-SK",{minimumFractionDigits:2,maximumFractionDigits:2})+" m²";
+  document.getElementById("poArea").textContent=s.area.toLocaleString("sk-SK",{minimumFractionDigits:2,maximumFractionDigits:2})+" m²";
+  document.getElementById("poTravelSummary").textContent=euro(s.travel);
+  document.getElementById("poFixed").textContent=euro(s.fixed);
   document.getElementById("poBase").textContent=euro(s.base);document.getElementById("poReserve").textContent=euro(s.reserve);
   document.getElementById("poReal").textContent=euro(s.real);document.getElementById("poDiscount").textContent=euro(s.discount);
   document.getElementById("poFinal").textContent=euro(s.final);document.getElementById("poNote").textContent=document.getElementById("note").value||"";

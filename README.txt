@@ -1,12 +1,15 @@
-JA PAINTING CALCULATOR V2.5.2 – LOGO ENHANCED
+JA PAINTING CALCULATOR V2.6
 
-Úpravy:
-- Odstránené veľké čierne okraje pôvodného loga.
-- Logo v hlavičke je väčšie a čitateľnejšie.
-- Logo je vložené priamo do index.html, takže funguje aj pri lokálnom otvorení.
-- Ikony aplikácie 192×192 a 512×512 sú upravené pre mobilnú plochu.
-- Mobilná ikona používa výraznejší výrez monogramu JA a maliarskeho valčeka.
+NOVÉ:
+- „Rezerva“ je premenovaná na Realizačná réžia a nepredvídané práce (10 %).
+- V PDF je táto položka transparentne vysvetlená.
+- Súhrn aj PDF zobrazujú plochu stien, stropov a celkovú maľovanú plochu.
+- PDF zobrazuje kilometre, cenu dopravy a ostatné položky.
+- Nová miestnosť sa pridá hore priamo pod tlačidlo + Pridať miestnosť.
+- Po pridaní sa automaticky zobrazí a pripraví na zadávanie.
+- Doplnená Špajza a Práčovňa.
+- Existujúce lokálne dáta zostávajú zachované.
 
-Mobil:
-Po nasadení na HTTPS hosting a použití „Pridať na plochu“ sa zobrazí vlastná JA ikona.
-Pri obyčajnom otvorení index.html z PC sa testuje webová aplikácia, nie inštalovaná PWA.
+NASADENIE:
+Nahraď všetky súbory v GitHub repozitári súbormi z tohto ZIP-u.
+Po nasadení úplne zavri PWA aplikáciu a znovu ju otvor.
